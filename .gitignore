@@ -1,0 +1,92 @@
+# ==================================================
+# Python
+# ==================================================
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# ==================================================
+# Environment variables and secrets
+# ==================================================
+.env
+.env.*
+!.env.example
+
+*.pem
+*.key
+*.p12
+*.pfx
+
+credentials
+credentials.*
+kubeconfig
+kubeconfig-*
+
+# AWS local configuration
+.aws/
+
+# ==================================================
+# Terraform
+# ==================================================
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+crash.log
+crash.*.log
+
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform CLI configuration
+.terraformrc
+terraform.rc
+
+# ==================================================
+# Kubernetes and Helm
+# ==================================================
+*.kubeconfig
+charts/*.tgz
+
+# ==================================================
+# macOS
+# ==================================================
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ==================================================
+# Windows compatibility
+# ==================================================
+Thumbs.db
+Desktop.ini
+
+# ==================================================
+# IDE
+# ==================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ==================================================
+# Logs and temporary files
+# ==================================================
+*.log
+tmp/
+temp/
+.cache/
+
+# ==================================================
+# Build artifacts
+# ==================================================
+dist/
+build/
+coverage/
