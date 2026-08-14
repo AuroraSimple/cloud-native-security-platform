@@ -1,0 +1,53 @@
+name: Build and Push
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'app/**'
+      - '.github/workflows/ci.yml'
+
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v6.2.3
+        with:
+          role-to-assume: arn:aws:iam::653293366187:role/github-actions-k8s-project-role
+          aws-region: ap-northeast-2
+          allowed-account-ids: 653293366187
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push serving image
+        run: |
+          IMAGE_TAG=${GITHUB_SHA::7}
+          REGISTRY=${{ steps.ecr-login.outputs.registry }}
+
+          cd app
+
+          docker build \
+            -t k8s-project/serving:$IMAGE_TAG \
+            -f Dockerfile.serving \
+            .
+
+          docker tag \
+            k8s-project/serving:$IMAGE_TAG \
+            $REGISTRY/k8s-project/serving:$IMAGE_TAG
+
+          docker push \
+            $REGISTRY/k8s-project/serving:$IMAGE_TAG
