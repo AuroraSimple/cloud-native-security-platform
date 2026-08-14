@@ -1,0 +1,4 @@
+image:
+  repository: <ACCOUNT_ID>.dkr.ecr.ap-northeast-2.amazonaws.com/k8s-project/serving
+  tag: v1
+replicaCount: 2
