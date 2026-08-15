@@ -3,19 +3,29 @@ kind: NetworkPolicy
 metadata:
   name: tf-serving-ingress-policy
   namespace: serving
+
 spec:
   podSelector:
     matchLabels:
       app: tf-serving
+
   policyTypes:
     - Ingress
+
   ingress:
     - from:
         - podSelector: {}
+
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+
         - ipBlock:
             cidr: 10.20.11.237/32
+
         - ipBlock:
             cidr: 10.20.53.144/32
+
       ports:
         - protocol: TCP
           port: 8501
