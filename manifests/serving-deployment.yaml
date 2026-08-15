@@ -1,61 +1,60 @@
 apiVersion: apps/v1
 kind: Deployment
-
 metadata:
-  name: tf-serving-deploy
-  namespace: serving
   labels:
     app: tf-serving
-
+  name: tf-serving-deploy
+  namespace: serving
 spec:
   replicas: 2
-
   selector:
     matchLabels:
       app: tf-serving
-
   template:
     metadata:
       labels:
         app: tf-serving
-
     spec:
+      containers:
+      - args:
+        - --monitoring_config_file=/etc/tf-serving/monitoring.config
+        image: 653293366187.dkr.ecr.ap-northeast-2.amazonaws.com/k8s-project/serving:v1
+        livenessProbe:
+          httpGet:
+            path: /v1/models/cifar10_model
+            port: 8501
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        name: tf-serving
+        ports:
+        - containerPort: 8501
+        readinessProbe:
+          httpGet:
+            path: /v1/models/cifar10_model
+            port: 8501
+          initialDelaySeconds: 10
+          periodSeconds: 5
+        resources:
+          limits:
+            cpu: "1"
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 1Gi
+        securityContext:
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          runAsNonRoot: true
+        volumeMounts:
+        - mountPath: /etc/tf-serving
+          name: tf-serving-monitoring
+          readOnly: true
       securityContext:
         seccompProfile:
           type: RuntimeDefault
-
-      containers:
-        - name: tf-serving
-          image: 653293366187.dkr.ecr.ap-northeast-2.amazonaws.com/k8s-project/serving:v1
-
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
-            capabilities:
-              drop:
-                - ALL
-
-          ports:
-            - containerPort: 8501
-
-          resources:
-            requests:
-              cpu: "500m"
-              memory: "1Gi"
-            limits:
-              cpu: "1"
-              memory: "2Gi"
-
-          readinessProbe:
-            httpGet:
-              path: /v1/models/cifar10_model
-              port: 8501
-            initialDelaySeconds: 10
-            periodSeconds: 5
-
-          livenessProbe:
-            httpGet:
-              path: /v1/models/cifar10_model
-              port: 8501
-            initialDelaySeconds: 15
-            periodSeconds: 10
+      volumes:
+      - configMap:
+          name: tf-serving-monitoring
+        name: tf-serving-monitoring

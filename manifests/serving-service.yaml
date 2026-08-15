@@ -4,6 +4,8 @@ kind: Service
 metadata:
   name: tf-serving-svc
   namespace: serving
+  labels:
+    app: tf-serving
 
 spec:
   type: ClusterIP

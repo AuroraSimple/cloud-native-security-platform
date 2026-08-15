@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: tf-serving-monitor
+  namespace: serving
+  labels:
+    release: monitoring
+spec:
+  selector:
+    matchLabels:
+      app: tf-serving
+  endpoints:
+    - port: http
+      path: /monitoring/prometheus/metrics
+      interval: 15s
