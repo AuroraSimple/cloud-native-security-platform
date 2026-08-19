@@ -1,6 +1,5 @@
 provider "aws" {
-  region = var.region
-
+  region = "ap-northeast-2"
   default_tags {
     tags = {
       Project     = "k8s-project"
@@ -9,3 +8,5 @@ provider "aws" {
     }
   }
 }
+
+data "aws_caller_identity" "current" {}

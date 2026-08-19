@@ -1,31 +1,20 @@
-data "aws_vpc" "existing" {
-  id = "vpc-0284032576f7c3772"
-}
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "~> 5.0"
 
-data "aws_subnet" "public_2a" {
-  id = "subnet-0bed71c80396ae685"
-}
+  name = "k8s-project-eks-vpc"
+  cidr = "10.20.0.0/16"
+  azs  = ["ap-northeast-2a", "ap-northeast-2c"]
 
-data "aws_subnet" "public_2c" {
-  id = "subnet-0e08179c48794b2c3"
-}
+  private_subnets = ["10.20.0.0/19", "10.20.32.0/19"]
+  public_subnets  = ["10.20.64.0/19", "10.20.96.0/19"]
 
-data "aws_subnet" "private_2a" {
-  id = "subnet-0dc44fee239421b4d"
-}
+  enable_nat_gateway = true
+  single_nat_gateway = true
 
-data "aws_subnet" "private_2c" {
-  id = "subnet-08ee380c1f03e2ba0"
-}
-
-locals {
-  public_subnet_ids = [
-    data.aws_subnet.public_2a.id,
-    data.aws_subnet.public_2c.id,
-  ]
-
-  private_subnet_ids = [
-    data.aws_subnet.private_2a.id,
-    data.aws_subnet.private_2c.id,
-  ]
+  public_subnet_tags = { "kubernetes.io/role/elb" = 1 }
+  private_subnet_tags = {
+    "kubernetes.io/role/internal-elb"       = 1
+    "kubernetes.io/cluster/k8s-project-eks" = "shared"
+  }
 }
