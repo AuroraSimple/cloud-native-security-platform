@@ -1,0 +1,15 @@
+FROM tensorflow/tensorflow:2.16.1-gpu
+
+WORKDIR /app
+
+RUN useradd -m -u 1000 appuser \
+    && mkdir -p /app/output \
+    && chown -R appuser:appuser /app
+
+COPY --chown=appuser:appuser src/ ./src/
+
+ENV PYTHONUNBUFFERED=1
+
+USER appuser
+
+ENTRYPOINT ["python", "src/train.py"]

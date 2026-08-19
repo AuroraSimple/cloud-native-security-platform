@@ -1,6 +1,12 @@
 import tensorflow as tf
 import os
 
+gpus = tf.config.list_physical_devices("GPU")
+print(f"TensorFlow GPUs detected: {gpus}")
+
+if os.environ.get("REQUIRE_GPU", "0") == "1" and not gpus:
+    raise RuntimeError("GPU is required but TensorFlow detected no GPU")
+
 (x_train, y_train), (x_test, y_test) = tf.keras.datasets.cifar10.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
